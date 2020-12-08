@@ -5,6 +5,7 @@ using Crowd_knowledge_contribution.Models;
 
 namespace Crowd_knowledge_contribution.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class DomainsController : Controller
     {
         private readonly ApplicationDbContext _database = new ApplicationDbContext();
