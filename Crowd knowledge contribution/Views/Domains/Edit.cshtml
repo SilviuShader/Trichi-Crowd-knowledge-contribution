@@ -1,0 +1,20 @@
+﻿@model Crowd_knowledge_contribution.Models.Domain
+@{
+    ViewBag.Title = "Editare domeniu";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<form method="post" action="/Domains/Edit/@Model.DomainId">
+
+    @Html.HttpMethodOverride(HttpVerbs.Put)
+
+    @Html.HiddenFor(m => m.DomainId)
+
+    @Html.Label("DomainName", "Denumire domeniu")
+    <br />
+    @Html.Editor("DomainName")
+    <br /><br />
+
+    <button class="btn btn-success" type="submit">Modifică domeniu</button>
+</form>

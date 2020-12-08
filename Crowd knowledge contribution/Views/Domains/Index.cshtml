@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.Title = "Lista de domenii";
+}
+
+<h1>@ViewBag.Message</h1>
+<h2>@ViewBag.Title</h2>
+
+@foreach (var category in @ViewBag.Domains)
+{
+    @Html.Label("DomainName", "Domeniu")
+    <p>@category.DomainName</p>
+    <a class="btn btn-success" href="/Domains/Show/@category.DomainId">Afișare domeniu</a>
+    <a class="btn btn-success" href="/Domains/Edit/@category.DomainId">Editare domeniu</a>
+    <br />
+    <hr />
+    <br />
+}
+
+<br />
+<a class="btn btn-primary" href="/Domains/New">Adaugă domeniu</a>
+<a class="btn btn-primary" href="/Articles/Index">Listă articole</a>
+<br />

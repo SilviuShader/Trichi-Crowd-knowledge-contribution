@@ -1,0 +1,36 @@
+﻿@model Crowd_knowledge_contribution.Models.Article
+
+
+@using (Html.BeginForm(actionName: "Edit", controllerName: "Articles"))
+{
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    @Html.HttpMethodOverride(HttpVerbs.Put)
+
+    @Html.HiddenFor(m => m.ArticleId)
+    <br />
+    @Html.Label("Title", "Titlu Articol")
+    <br />
+    @Html.Editor("Title")
+    @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
+    <br /><br />
+
+    @Html.Label("Content", "Continut Articol")
+    <br />
+    @Html.EditorFor(m => m.Content)
+    @Html.ValidationMessageFor(m => m.Content, "", new { @class = "text-danger" })
+    <br /><br />
+
+    @Html.HiddenFor(m => m.LastModified)
+    <br />
+
+    <label>Selectați domeniul</label>
+    @Html.DropDownListFor(m => m.DomainId, new SelectList(Model.Dom, "Value", "Text"),
+        "Selectați domeniul", new { @class = "form-control" })
+    @Html.ValidationMessage("DomainId", null, new { @class = "text-danger" })
+
+    <br />
+    <br />
+
+    <button class="btn btn-sm btn-success" type="submit">Modifica articol</button>
+}
+

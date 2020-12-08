@@ -1,0 +1,24 @@
+﻿@using Crowd_knowledge_contribution.Models
+
+@{
+    ViewBag.Title = "Articole bombă";
+}
+
+<h1>@ViewBag.Message</h1>
+<h2>@ViewBag.Title</h2>
+
+<a class="btn btn-primary" href="/Domains/Index">Afișare domenii</a>
+
+<a class="btn btn-primary" href="/Articles/New">Adaugă articol</a>
+<br />
+<br />
+
+@foreach (Article article in ViewBag.Articles)
+{
+    <div class="panel panel-default">
+        @Html.Partial("ArticleInfo", article)
+        <div class="panel-footer">
+            <a class=" btn btn-sm btn btn-success" href="/Articles/Show/@article.ArticleId">Afișare articol</a>
+        </div>
+    </div>
+}
