@@ -8,6 +8,8 @@ namespace Crowd_knowledge_contribution.Models
 {
     public class Comment
     {
+        public string UserId;
+
         [Key]
         public int CommentId { get; set; }
         [Required]

@@ -26,6 +26,10 @@ namespace Crowd_knowledge_contribution.Models
         public int DomainId { get; set; }
         public virtual Domain Domain { get; set; }
 
+        public string UserId { get; set; }
+
+        public virtual ApplicationUser User { get; set; }
+
         public IEnumerable<SelectListItem> Dom { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }

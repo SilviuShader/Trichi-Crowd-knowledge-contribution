@@ -13,6 +13,16 @@
 <br />
 <br />
 
+@using (Html.BeginForm())
+{
+    <p>
+        <div class="col-md-2">
+            Introdu cuvant cheie: @Html.TextBox("SearchName")<br />
+        </div>
+        <input type="submit" value="Search" class="col-md-2"/>
+    </p>
+}
+
 @foreach (Article article in ViewBag.Articles)
 {
     <div class="panel panel-default">
