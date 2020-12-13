@@ -45,7 +45,7 @@ namespace Crowd_knowledge_contribution.Controllers
 
         public ActionResult Edit(string id)
         {
-            ApplicationUser user = _database.Users.Find(id);
+            var user = _database.Users.Find(id);
             user.AllRoles = GetAllRoles();
             var userRole = user.Roles.FirstOrDefault();
             ViewBag.userRole = userRole.RoleId;

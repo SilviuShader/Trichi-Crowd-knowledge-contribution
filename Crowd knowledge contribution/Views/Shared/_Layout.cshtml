@@ -17,21 +17,15 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Cele mai stiri", "Index", "Articles", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("Articole", "Index", "Articles", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Cele mai stiri", "Index", "Articles")</li>
 
                     @if (User.IsInRole("Admin"))
                     {
-                        <li>@Html.ActionLink("Afisare categorii", "Index", "Domains")</li>
-                        <li>@Html.ActionLink("Adaugare categorie", "New", "Domains")</li>
-                    }
-
-                    @if (User.IsInRole("Editor") || User.IsInRole("Admin"))
-                    {
-                        <li>@Html.ActionLink("Adaugare articol", "New", "Articles")</li>
+                        <li>@Html.ActionLink("Domenii", "Index", "Domains")</li>
+                        <li>@Html.ActionLink("Utilizatori", "Index", "Users")</li>
                     }
 
                 </ul>

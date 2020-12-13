@@ -7,21 +7,27 @@
 <h1>@ViewBag.Message</h1>
 <h2>@ViewBag.Title</h2>
 
-<a class="btn btn-primary" href="/Domains/Index">Afișare domenii</a>
-
-<a class="btn btn-primary" href="/Articles/New">Adaugă articol</a>
-<br />
+@if (User.IsInRole("Admin"))
+{
+    <a class="btn btn-primary" href="/Domains/Index">Afișare domenii</a>
+}
+@if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+{
+    <a class="btn btn-primary" href="/Articles/New">Adaugă articol</a>
+    <br />
+}
 <br />
 
 @using (Html.BeginForm())
 {
-    <p>
-        <div class="col-md-2">
-            Introdu cuvant cheie: @Html.TextBox("SearchName")<br />
-        </div>
-        <input type="submit" value="Search" class="col-md-2"/>
-    </p>
+    @Html.TextBox("SearchName", "", new { @class = "form-control", @placeholder = "Căutare" })
+    <br/>
+    <input type="submit" value="Căutare" class="col-md-2" />
 }
+
+<br />
+<br />
+
 
 @foreach (Article article in ViewBag.Articles)
 {

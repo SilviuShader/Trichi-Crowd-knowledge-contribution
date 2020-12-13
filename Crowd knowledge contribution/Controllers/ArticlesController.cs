@@ -8,14 +8,12 @@ using Microsoft.AspNet.Identity;
 
 namespace Crowd_knowledge_contribution.Controllers
 {
-    [Authorize]
     public class ArticlesController : Controller
     {
         private readonly ApplicationDbContext _database = new ApplicationDbContext();
 
         // GET: Articles, cea default
         //[HttpGet]
-        [Authorize(Roles = "User,Editor,Admin")]
         public ActionResult Index(string searchName)
         {
             //pagina cu toate
@@ -34,20 +32,9 @@ namespace Crowd_knowledge_contribution.Controllers
             return View();
         }
 
-        /*public ActionResult Index(string searchName)
-        {
-            var articles = _database.Articles.Include("Domain").Include("User");
-            if (!string.IsNullOrEmpty(searchName))
-            {
-                //articles = articles.Where(c => c.Title.Contains(searchName));
-            }
-            return View(articles);
-        }*/
-
-        [Authorize(Roles = "User,Editor,Admin")]
         public ActionResult Show(int id)
         {
-            Article article = _database.Articles.Where(i => i.ArticleId == id).FirstOrDefault();
+            var article = _database.Articles.FirstOrDefault(i => i.ArticleId == id);
             ICollection<Comment> comments = _database.Comments.Where(x => x.ArticleId == article.ArticleId).ToArray();
             article.Comments = comments;
             //Article article = _database.Articles.Find(id,1);
@@ -72,7 +59,7 @@ namespace Crowd_knowledge_contribution.Controllers
 
                 else
                 {
-                    Article a = _database.Articles.Where(i => i.ArticleId == comm.ArticleId).FirstOrDefault();
+                    var a = _database.Articles.FirstOrDefault(i => i.ArticleId == comm.ArticleId);
                     return View(a);
                 }
 
@@ -80,13 +67,12 @@ namespace Crowd_knowledge_contribution.Controllers
 
             catch (Exception e)
             {
-                Article a = _database.Articles.Where(i => i.ArticleId == comm.ArticleId).FirstOrDefault();
+                var a = _database.Articles.FirstOrDefault(i => i.ArticleId == comm.ArticleId);
                 return View(a);
             }
-
         }
 
-        //[HttpGet]
+        [HttpGet]
         [Authorize(Roles = "Editor,Admin")]
         public ActionResult New()
         {
@@ -129,7 +115,7 @@ namespace Crowd_knowledge_contribution.Controllers
         [Authorize(Roles = "Editor,Admin")]
         public ActionResult Edit(int id)
         {
-            Article article = _database.Articles.Where(i => i.ArticleId == id).FirstOrDefault();
+            var article = _database.Articles.FirstOrDefault(i => i.ArticleId == id);
             article.Dom = GetAllDomains();
             if (article.UserId == User.Identity.GetUserId() || User.IsInRole("Admin"))
             {
@@ -149,12 +135,11 @@ namespace Crowd_knowledge_contribution.Controllers
         public ActionResult Edit(int id, Article requestArticle)
         {
             requestArticle.Dom = GetAllDomains();
-
             try
             {
                 if (ModelState.IsValid)
                 {
-                    Article article = _database.Articles.Where(i => i.ArticleId == id).FirstOrDefault();
+                    var article = _database.Articles.FirstOrDefault(i => i.ArticleId == id);
                     if (article.UserId == User.Identity.GetUserId() || User.IsInRole("Admin"))
                     {
                         if (TryUpdateModel(article))
@@ -193,7 +178,7 @@ namespace Crowd_knowledge_contribution.Controllers
         [Authorize(Roles = "Editor,Admin")]
         public ActionResult Delete(int id)
         {
-            var article = _database.Articles.Where(i => i.ArticleId == id).FirstOrDefault();
+            var article = _database.Articles.FirstOrDefault(i => i.ArticleId == id);
             ICollection<Comment> comments = _database.Comments.Where(x => x.ArticleId == article.ArticleId).ToArray();
 
             if (article.UserId == User.Identity.GetUserId() || User.IsInRole("Admin"))

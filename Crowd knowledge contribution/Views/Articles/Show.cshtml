@@ -3,14 +3,13 @@
 <h2>Vizualizare articol</h2>
 
 <br />
-<a href="/Articles/Index">Inapoi la articole</a>
+<a class="btn btn-primary" href="/Articles/Index">Inapoi la articole</a>
 <br />
-<a class="btn btn-info" href="/Articles/New">Adauga articol</a>
 <br />
 
 <div class="panel panel-default">
     @Html.Partial("ArticleInfo", Model)
-    @if (ViewBag.afisareButoane == true && Model.UserId == ViewBag.utilizatorCurent || ViewBag.esteAdmin)
+    @if (ViewBag.afisareButoane && Model.UserId == ViewBag.utilizatorCurent || ViewBag.esteAdmin)
     {
         <div class="panel-footer">
             <a class="btn btn-success pull-left" href="/Articles/Edit/@Model.ArticleId">Modifica articol</a>
@@ -38,17 +37,20 @@
                     <p>@comm.Content</p>
                     <small class="pull-right">@comm.Date</small>
                 </div>
-                @if (comm.UserId == ViewBag.utilizatorCurent || ViewBag.esteAdmin)
+                @if (comm.UserId == ViewBag.utilizatorCurent)
                 {
-                    <div style="display: inline-block; float : left; margin-right: 15px">
+                    <div style="display: inline-block; float: left; margin-right: 15px">
                         <a class="glyphicon glyphicon-pencil" href="/Comments/Edit/@comm.CommentId"></a>
                     </div>
-                <div style="display: inline-block; float : left">
-                    <form method="post" action="/Comments/Delete/@comm.CommentId">
-                        @Html.HttpMethodOverride(HttpVerbs.Delete)
-                        <button class="glyphicon glyphicon-trash" style="border: none; background: transparent" type="submit"></button>
-                    </form>
-                </div>
+                }
+                @if (comm.UserId == ViewBag.utilizatorCurent || ViewBag.esteAdmin)
+                {
+                    <div style="display: inline-block; float: left">
+                        <form method="post" action="/Comments/Delete/@comm.CommentId">
+                            @Html.HttpMethodOverride(HttpVerbs.Delete)
+                            <button class="glyphicon glyphicon-trash" style="border: none; background: transparent" type="submit"></button>
+                        </form>
+                    </div>
                 }
             </div>
         </div>
@@ -67,6 +69,7 @@
                 <form method="post" action="/Comments/New">
                     <div class="panel-body">
                         <input type="hidden" name="ArticleId" value="@Model.ArticleId" />
+                        <input type ="hidden" name="UserId" value="@ViewBag.utilizatorCurent">
                         <label>Continut comentariu</label>
                         <br />
                         <textarea class="form-control" name="Content"></textarea>

@@ -164,7 +164,7 @@ namespace Crowd_knowledge_contribution.Controllers
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
                     UserManager.AddToRole(user.Id,"User");
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Articles");
                 }
                 AddErrors(result);
             }
@@ -393,7 +393,7 @@ namespace Crowd_knowledge_contribution.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Articles");
         }
 
         //
@@ -450,7 +450,7 @@ namespace Crowd_knowledge_contribution.Controllers
             {
                 return Redirect(returnUrl);
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Articles");
         }
 
         internal class ChallengeResult : HttpUnauthorizedResult
