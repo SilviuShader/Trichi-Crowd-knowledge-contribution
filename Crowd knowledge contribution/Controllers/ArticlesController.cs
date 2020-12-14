@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using Crowd_knowledge_contribution.Models;
@@ -10,25 +11,109 @@ namespace Crowd_knowledge_contribution.Controllers
 {
     public class ArticlesController : Controller
     {
+        private const int ARTICLES_PER_PAGE = 3;
         private readonly ApplicationDbContext _database = new ApplicationDbContext();
 
         // GET: Articles, cea default
         //[HttpGet]
-        public ActionResult Index(string searchName)
+        public ActionResult Index()
         {
             //pagina cu toate
-            var articles = _database.Articles.Include("Domain").Include("User");
+            var articles = _database.Articles.Include("Domain").Include("User").OrderBy(article => article.LastModified);
+            var search = "";
+            var carryArguments = "";
+            var order = "0";
+
             if (TempData.ContainsKey("message"))
             {
                 ViewBag.Message = TempData["message"];
             }
-            if (!string.IsNullOrEmpty(searchName))
+
+            if (Request.Params.Get("search") != null)
             {
-                var articles1 = articles.Where(c => c.Title.Contains(searchName));
-                ViewBag.Articles = articles1;
-                return View();
+                search = Request.Params.Get("search").Trim();
+                if (search != "")
+                    carryArguments += "search=" + search;
+                var articleIds = _database.Articles.Where(
+                    at => at.Title.Contains(search)
+                          || at.Content.Contains(search)).Select(a => a.ArticleId).ToList();
+
+                var commentIds = _database.Comments.Where(c => c.Content.Contains(search)).Select(com => com.ArticleId)
+                    .ToList();
+
+                var mergedIds = articleIds.Union(commentIds).ToList();
+                articles = _database.Articles.Where(article => mergedIds.Contains(article.ArticleId)).Include("Domain").Include("User").OrderBy(article => article.LastModified);
             }
-            ViewBag.Articles = articles;
+
+            var validOrder = false;
+            if (Request.Params.Get("order") != null)
+            {
+                order = Request.Params.Get("order").Trim();
+                switch (order)
+                {
+                    case "0":
+                    case "1":
+                    case "2":
+                    case "3":
+                        validOrder = true;
+                        break;
+                }
+
+                if (validOrder)
+                {
+                    if (carryArguments == "")
+                        carryArguments += "order=" + order;
+                    else
+                        carryArguments += "&order=" + order;
+                }
+                else
+                {
+                    order = "0";
+                }
+            }
+            else
+            {
+                order = "0";
+            }
+
+            switch (order)
+            {
+                case "0":
+                    articles = articles.OrderByDescending(article => article.LastModified);
+                    break;
+                case "1":
+                    articles = articles.OrderBy(article => article.LastModified);
+                    break;
+                case "2":
+                    articles = articles.OrderBy(article => article.Title);
+                    break;
+                case "3":
+                    articles = articles.OrderByDescending(article => article.Title);
+                    break;
+            }
+
+            var totalItems = articles.Count();
+            var currentPage = 0;
+            try
+            {
+                currentPage = Convert.ToInt32(Request.Params.Get("page"));
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            var offset = 0;
+            if (!currentPage.Equals(0))
+                offset = (currentPage - 1) * ARTICLES_PER_PAGE;
+
+            var paginatedArticles = articles.Skip(offset).Take(ARTICLES_PER_PAGE);
+
+            ViewBag.CarryArguments = carryArguments;
+            ViewBag.Order = order;
+            ViewBag.Articles = paginatedArticles;
+            ViewBag.LastPage = Math.Ceiling((float) totalItems / ARTICLES_PER_PAGE);
+            ViewBag.SearchString = search;
             return View();
         }
 
