@@ -183,7 +183,7 @@ namespace Crowd_knowledge_contribution.Controllers
                 {
                     _database.Articles.Add(article);
                     _database.SaveChanges();
-                    TempData["message"] = "Operatiune adaugare articol: succes";
+                    TempData["message"] = "Articolul a fost adăugat cu succes.";
                     return RedirectToAction("Index");
                 }
                 else

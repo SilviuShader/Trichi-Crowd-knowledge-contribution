@@ -1,11 +1,17 @@
 ﻿
 <div class="panel-heading">@Model.Title</div>
 <div class="panel-body">
-    Conținut articol: <strong>@Model.Content</strong>
+    <strong>@Model.Content</strong>
+    <br />
     <br />
     <span class="label label-success">@Model.LastModified</span>
     <br />
-    <i class="glyphicon glyphicon-globe"></i>@Model.Domain.DomainName
+    <br />
+    <a class="btn btn-primary" href="/DomainArticles/Index/@Model.Domain.DomainName">
+        <i class="glyphicon glyphicon-globe"></i>
+        @Model.Domain.DomainName
+    </a>
+    <br />
     <br />
     <i class="glyphicon glyphicon-user"></i> <i>articol scris de</i> <strong> @Model.User.UserName </strong>
     <br />

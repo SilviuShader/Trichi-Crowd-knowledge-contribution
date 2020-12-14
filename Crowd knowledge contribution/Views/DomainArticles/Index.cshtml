@@ -1,0 +1,43 @@
+﻿@using System.Web.UI.WebControls
+@using Crowd_knowledge_contribution.Models
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<br />
+<br />
+
+@{
+    var validPage = false;
+    if (ViewBag.Articles != null)
+    {
+        if (ViewBag.Articles.Count > 0)
+        {
+            validPage = true;
+        }
+    }
+
+    if (!validPage)
+    {
+        <h1>Nu există articole din domeniul @ViewBag.DomainName</h1>
+        <br/> 
+        <br/>
+    }
+    else
+    {
+        <h1>@ViewBag.DomainName</h1>
+        <br/> 
+        <br/>
+        foreach (Article article in ViewBag.Articles)
+        {
+            <div class="panel panel-default">
+                @Html.Partial("ArticleInfo", article)
+                <div class="panel-footer">
+                    <a class=" btn btn-sm btn btn-success" href="/Articles/Show/@article.ArticleId">Afișare articol</a>
+                </div>
+            </div>
+        }
+    }
+}
+
