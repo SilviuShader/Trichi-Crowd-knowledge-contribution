@@ -1,7 +1,7 @@
 ﻿
 <div class="panel-heading">@Model.Title</div>
 <div class="panel-body">
-    <strong>@Model.Content</strong>
+    @Html.Raw(Model.Content)
     <br />
     <br />
     <span class="label label-success">@Model.LastModified</span>

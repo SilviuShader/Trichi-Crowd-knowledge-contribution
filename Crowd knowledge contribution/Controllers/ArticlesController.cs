@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web.Mvc;
 using Crowd_knowledge_contribution.Models;
 using Microsoft.AspNet.Identity;
+using Microsoft.Security.Application;
 
 namespace Crowd_knowledge_contribution.Controllers
 {
@@ -168,6 +169,7 @@ namespace Crowd_knowledge_contribution.Controllers
 
 
         [HttpPost]
+        [ValidateInput(false)]
         [Authorize(Roles = "Editor,Admin")]
         public ActionResult New(Article article)
         {
@@ -181,6 +183,8 @@ namespace Crowd_knowledge_contribution.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    article.Content = Sanitizer.GetSafeHtmlFragment(article.Content);
+
                     _database.Articles.Add(article);
                     _database.SaveChanges();
                     TempData["message"] = "Articolul a fost adăugat cu succes.";
@@ -216,6 +220,7 @@ namespace Crowd_knowledge_contribution.Controllers
         }
 
         [HttpPut]
+        [ValidateInput(false)]
         [Authorize(Roles = "Editor,Admin")]
         public ActionResult Edit(int id, Article requestArticle)
         {
@@ -229,6 +234,7 @@ namespace Crowd_knowledge_contribution.Controllers
                     {
                         if (TryUpdateModel(article))
                         {
+                            article.Content = Sanitizer.GetSafeHtmlFragment(article.Content);
                             article.Title = requestArticle.Title;
                             article.Content = requestArticle.Content;
                             article.DomainId = requestArticle.DomainId;
