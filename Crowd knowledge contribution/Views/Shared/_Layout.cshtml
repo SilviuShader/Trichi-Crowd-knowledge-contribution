@@ -6,7 +6,7 @@
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-    <link href="~/Scripts/summernote/summernote.css" rel="stylesheet" /> 
+    <link href=http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.css" rel="stylesheet" /> 
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -36,23 +36,17 @@
     <div class="container body-content">
         @RenderBody()
         <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        <footer class="footer-position">
+            <p>&copy; @DateTime.Now.Year - <span class="font-logo">Crowd Knowledge Contribution</span></p>
         </footer>
     </div>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/Scripts/summernote/summernote.js")
     @RenderSection("scripts", required: false)
 
-    <script>
-        $(".summernote").summernote({  
-            height: 300,
-            minHeight: 200,
-            focus: true,
-        });      
-    </script> 
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
+    @Scripts.Render("~/Scripts/Summernote.js");
 
 </body>
 </html>

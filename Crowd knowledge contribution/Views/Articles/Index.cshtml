@@ -1,8 +1,9 @@
 ﻿@using System.Web.UI.WebControls
 @using Crowd_knowledge_contribution.Models
 
+
 @{
-    ViewBag.Title = "Articole bombă";
+    ViewBag.Title = "Articole";
 }
 
 <h1>@ViewBag.Message</h1>
@@ -19,49 +20,70 @@
 }
 <br />
 
-<form class="card card-sm" method="GET">
-    <p>Ordonare</p>
-    <select name="order">
-        @if (@ViewBag.Order == "0")
-        {
-            <option value="0" selected>Cele mai recente</option>
-        }
-        else
-        {
-            <option value="0">Cele mai recente</option>
-        }
-        @if (@ViewBag.Order == "1")
-        {
-            <option value="1" selected>Cele mai vechi</option>
-        }
-        else
-        {
-            <option value="1">Cele mai vechi</option>
-        }
-        @if (@ViewBag.Order == "2")
-        {
-            <option value="2" selected>Alfabetic</option>
-        }
-        else
-        {
-            <option value="2">Alfabetic</option>
-        }
-        @if (@ViewBag.Order == "3")
-        {
-            <option value="3" selected>Alfabetic (ordine inversă)</option>
-        }
-        else
-        {
-            <option value="3">Alfabetic (ordine inversă)</option>
-        }
-    </select>
-    <br />
-    <br />
+<form class="card card-sm" ="GET">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <label class="text-muted">Ordonare</label>
+                <select name="order" class="form-control">
+                    @if (@ViewBag.Order == "0")
+                    {
+                        <option value="0" selected>Cele mai recente</option>
+                    }
+                    else
+                    {
+                        <option value="0">Cele mai recente</option>
+                    }
+                    @if (@ViewBag.Order == "1")
+                    {
+                        <option value="1" selected>Cele mai vechi</option>
+                    }
+                    else
+                    {
+                        <option value="1">Cele mai vechi</option>
+                    }
+                    @if (@ViewBag.Order == "2")
+                    {
+                        <option value="2" selected>Alfabetic</option>
+                    }
+                    else
+                    {
+                        <option value="2">Alfabetic</option>
+                    }
+                    @if (@ViewBag.Order == "3")
+                    {
+                        <option value="3" selected>Alfabetic (ordine inversă)</option>
+                    }
+                    else
+                    {
+                        <option value="3">Alfabetic (ordine inversă)</option>
+                    }
+                </select>
+                <br />
+                <br />
 
-    @Html.TextBox("search", (string)ViewBag.SearchString, new { @class = "form-control", @placeholder = "Introduceți cuvinte cheie." })
-    <br />
-    <input type="submit" value="Filtează" class="col-md-2" />
-    <br />
+                <div class="search-container">
+                    @Html.TextBox("search", (string)ViewBag.SearchString, new { @class = "form-control", @placeholder = "Introduceți cuvinte cheie." })
+                    <br/>
+                    <button type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                </div>
+
+                <br />
+            </div>
+        </div>
+    </div>
+
+
+    <!--
+        @Html.TextBox("search", (string)ViewBag.SearchString, new { @class = "form-control", @placeholder = "Introduceți cuvinte cheie." })
+        <br />
+        <input type="submit" value="Filtează" class="col-md-2" />
+        <br/>
+     -->
+
+
+
+
 </form>
 
 
@@ -69,19 +91,23 @@
 <br />
 
 
+
 @foreach (Article article in ViewBag.Articles)
 {
-    <div class="panel panel-default">
+    <div class="panel panel-info">
         @Html.Partial("ArticleInfo", article)
         <div class="panel-footer">
-            <a class=" btn btn-sm btn btn-success" href="/Articles/Show/@article.ArticleId">Afișare articol</a>
+            <a class="btn btn-sm btn btn-primary" href="/Articles/Show/@article.ArticleId">
+                <i class="glyphicon glyphicon-book"></i> <strong> Citește articol</strong>
+            </a>
         </div>
     </div>
+
 }
 
 <div>
     <nav aria-label="Page navigation">
-    
+
         <ul class="pagination">
             <li>
                 <a href="/Articles/Index?page=1&@ViewBag.CarryArguments" aria-label="Previous">

@@ -15,13 +15,56 @@ namespace Crowd_knowledge_contribution.Controllers
         private const int ARTICLES_PER_PAGE = 3;
         private readonly ApplicationDbContext _database = new ApplicationDbContext();
 
+        public static Int32 EditDistance(string a, string b)
+        {
+            if (String.IsNullOrEmpty(a) && String.IsNullOrEmpty(b))
+                return 0;
+            if (String.IsNullOrEmpty(a))
+                return b.Length;
+            if (String.IsNullOrEmpty(b))
+                return a.Length;
+        
+            int la = a.Length;
+            int lb = b.Length;
+            var dp = new int[la + 1, lb + 1];
+
+            for (int i = 0; i <= la; i++)
+                for (int j = 0; j <= lb; j++)
+                {
+                    if (i == 0)
+                        dp[i, j] = j;
+                    else if (j == 0)
+                        dp[i, j] = i;
+                    else if (a[i - 1] == b[j - 1])
+                        dp[i, j] = dp[i - 1, j - 1];
+                    else
+                        dp[i, j] = 1 + Math.Min(dp[i, j - 1], Math.Min(dp[i - 1, j], dp[i - 1, j - 1]));
+                }
+            return dp[la, lb];
+        }
+
+        private static int subString(string str, string cautat)
+        {
+            for (int i = 0; i < str.Length; i++)
+            {
+                for (int j = i; j < str.Length; j++)
+                {
+                    var substring = str.Substring(i, j - i + 1);
+                    //System.Diagnostics.Debug.WriteLine(substring);
+                    if (EditDistance(substring, cautat) < 2)
+                        return 1;
+                }
+            }
+            return 0;
+        }
+
         // GET: Articles, cea default
         //[HttpGet]
         public ActionResult Index()
         {
             //pagina cu toate
             var articles = _database.Articles.Include("Domain").Include("User").OrderBy(article => article.LastModified);
-            var search = "";
+            string search = "";
             var carryArguments = "";
             var order = "0";
 
@@ -35,9 +78,18 @@ namespace Crowd_knowledge_contribution.Controllers
                 search = Request.Params.Get("search").Trim();
                 if (search != "")
                     carryArguments += "search=" + search;
-                var articleIds = _database.Articles.Where(
+                /*var articleIds = _database.Articles.Where(
                     at => at.Title.Contains(search)
-                          || at.Content.Contains(search)).Select(a => a.ArticleId).ToList();
+                          || at.Content.Contains(search) ).Select(a => a.ArticleId).ToList();*/
+
+                List<int> articleIds = new List<int>();
+                foreach (var article in _database.Articles)
+                {
+                    if (article.Title.ToLower().Contains(search) || article.Content.ToLower().Contains(search) || subString(article.Title.ToLower(), search) == 1)
+                        articleIds.Add(article.ArticleId);
+                    System.Diagnostics.Debug.WriteLine(subString(article.Title, search));
+
+                }
 
                 var commentIds = _database.Comments.Where(c => c.Content.Contains(search)).Select(com => com.ArticleId)
                     .ToList();
