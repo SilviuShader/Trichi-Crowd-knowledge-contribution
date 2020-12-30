@@ -1,4 +1,5 @@
-﻿@model Crowd_knowledge_contribution.Models.Article
+﻿@using System.Web.UI.WebControls
+@model Crowd_knowledge_contribution.Models.Article
 
 <h2>Vizualizare articol</h2>
 
@@ -27,6 +28,9 @@
 <br />
 
 <br />
+@{
+    var commentCount = 0;
+}
 @foreach (var comm in Model.Comments)
 {
     <div class="container">
@@ -36,7 +40,7 @@
                 <div>
                     <p>@comm.Content</p>
                     <small class="pull-right">@comm.Date</small>
-                    <i class="glyphicon glyphicon-user"></i> <i>scris de</i> <strong> Anonim </strong>
+                    <i class="glyphicon glyphicon-user"></i> <i>Scris de</i> <strong> @ViewBag.CommentUsernames[commentCount] </strong>
                 </div>
                 @if (comm.UserId == ViewBag.utilizatorCurent)
                 {
@@ -58,6 +62,8 @@
         <div class="col-md-2"></div>
     </div>
     <hr />
+
+    commentCount++;
 }
 
 

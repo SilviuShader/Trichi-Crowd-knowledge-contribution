@@ -175,6 +175,8 @@ namespace Crowd_knowledge_contribution.Controllers
             var article = _database.Articles.FirstOrDefault(i => i.ArticleId == id);
             ICollection<Comment> comments = _database.Comments.Where(x => x.ArticleId == article.ArticleId).ToArray();
             article.Comments = comments;
+            var commentUsernames = comments.Select(comment => _database.Users.FirstOrDefault(i => i.Id == comment.UserId).Email).ToList();
+            ViewBag.CommentUsernames = commentUsernames.ToArray();
             //Article article = _database.Articles.Find(id,1);
             SetAccessRights();
             return View(article);
