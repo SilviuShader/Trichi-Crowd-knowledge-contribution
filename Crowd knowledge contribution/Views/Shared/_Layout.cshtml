@@ -44,10 +44,16 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/Scripts/summernote/summernote.js")
     @RenderSection("scripts", required: false)
 
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote.js"></script>
-    @Scripts.Render("~/Scripts/Summernote.js");
+    <script>
+        $(".summernote").summernote({  
+            height: 300,
+            minHeight: 200,
+            focus: true,
+        });      
+    </script> 
 
 </body>
 </html>

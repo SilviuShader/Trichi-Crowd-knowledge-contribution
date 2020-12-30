@@ -15,21 +15,21 @@ namespace Crowd_knowledge_contribution.Controllers
         private const int ARTICLES_PER_PAGE = 3;
         private readonly ApplicationDbContext _database = new ApplicationDbContext();
 
-        public static Int32 EditDistance(string a, string b)
+        public static int EditDistance(string a, string b)
         {
-            if (String.IsNullOrEmpty(a) && String.IsNullOrEmpty(b))
+            if (string.IsNullOrEmpty(a) && string.IsNullOrEmpty(b))
                 return 0;
-            if (String.IsNullOrEmpty(a))
+            if (string.IsNullOrEmpty(a))
                 return b.Length;
-            if (String.IsNullOrEmpty(b))
+            if (string.IsNullOrEmpty(b))
                 return a.Length;
         
-            int la = a.Length;
-            int lb = b.Length;
+            var la = a.Length;
+            var lb = b.Length;
             var dp = new int[la + 1, lb + 1];
 
-            for (int i = 0; i <= la; i++)
-                for (int j = 0; j <= lb; j++)
+            for (var i = 0; i <= la; i++)
+                for (var j = 0; j <= lb; j++)
                 {
                     if (i == 0)
                         dp[i, j] = j;
@@ -43,11 +43,11 @@ namespace Crowd_knowledge_contribution.Controllers
             return dp[la, lb];
         }
 
-        private static int subString(string str, string cautat)
+        private static int SubString(string str, string cautat)
         {
-            for (int i = 0; i < str.Length; i++)
+            for (var i = 0; i < str.Length; i++)
             {
-                for (int j = i; j < str.Length; j++)
+                for (var j = i; j < str.Length; j++)
                 {
                     var substring = str.Substring(i, j - i + 1);
                     //System.Diagnostics.Debug.WriteLine(substring);
@@ -63,8 +63,12 @@ namespace Crowd_knowledge_contribution.Controllers
         public ActionResult Index()
         {
             //pagina cu toate
-            var articles = _database.Articles.Include("Domain").Include("User").OrderBy(article => article.LastModified);
-            string search = "";
+            var articles = _database.Articles
+                .Include("Domain")
+                .Include("User")
+                .Where(article => article.VersionId == _database.Articles.Where(a => a.ArticleId == article.ArticleId).Select(a => a.VersionId).Max())
+                .OrderBy(article => article.LastModified);
+            var search = "";
             var carryArguments = "";
             var order = "0";
 
@@ -82,12 +86,12 @@ namespace Crowd_knowledge_contribution.Controllers
                     at => at.Title.Contains(search)
                           || at.Content.Contains(search) ).Select(a => a.ArticleId).ToList();*/
 
-                List<int> articleIds = new List<int>();
+                var articleIds = new List<int>();
                 foreach (var article in _database.Articles)
                 {
-                    if (article.Title.ToLower().Contains(search) || article.Content.ToLower().Contains(search) || subString(article.Title.ToLower(), search) == 1)
+                    if (article.Title.ToLower().Contains(search) || article.Content.ToLower().Contains(search) || SubString(article.Title.ToLower(), search) == 1)
                         articleIds.Add(article.ArticleId);
-                    System.Diagnostics.Debug.WriteLine(subString(article.Title, search));
+                    System.Diagnostics.Debug.WriteLine(SubString(article.Title, search));
 
                 }
 
@@ -95,7 +99,12 @@ namespace Crowd_knowledge_contribution.Controllers
                     .ToList();
 
                 var mergedIds = articleIds.Union(commentIds).ToList();
-                articles = _database.Articles.Where(article => mergedIds.Contains(article.ArticleId)).Include("Domain").Include("User").OrderBy(article => article.LastModified);
+                articles = _database.Articles
+                    .Where(article => mergedIds.Contains(article.ArticleId))
+                    .Include("Domain")
+                    .Include("User")
+                    .Where(article => article.VersionId == _database.Articles.Where(a => a.ArticleId == article.ArticleId).Select(a => a.VersionId).Max())
+                    .OrderBy(article => article.LastModified);
             }
 
             var validOrder = false;
@@ -172,12 +181,28 @@ namespace Crowd_knowledge_contribution.Controllers
 
         public ActionResult Show(int id)
         {
-            var article = _database.Articles.FirstOrDefault(i => i.ArticleId == id);
+            var version = 0;
+            if (Request.Params.Get("version") != null && User.IsInRole("Admin"))
+            {
+                var versionString = Request.Params.Get("version").Trim();
+                int.TryParse(versionString, out version);
+            }
+
+            var article = _database.Articles.FirstOrDefault(art => art.ArticleId == id && art.VersionId == version);
+            if (article is null)
+                article = _database.Articles.Where(art => art.VersionId == _database.Articles.Where(a => a.ArticleId == art.ArticleId).Select(a => a.VersionId).Max()).FirstOrDefault(i => i.ArticleId == id);
+
+            if (article is null)
+            {
+                TempData["message"] = "Nu există acest articol";
+                return RedirectToAction("Index");
+            }
+
             ICollection<Comment> comments = _database.Comments.Where(x => x.ArticleId == article.ArticleId).ToArray();
             article.Comments = comments;
             var commentUsernames = comments.Select(comment => _database.Users.FirstOrDefault(i => i.Id == comment.UserId).Email).ToList();
             ViewBag.CommentUsernames = commentUsernames.ToArray();
-            //Article article = _database.Articles.Find(id,1);
+
             SetAccessRights();
             return View(article);
         }
@@ -194,22 +219,15 @@ namespace Crowd_knowledge_contribution.Controllers
                 {
                     _database.Comments.Add(comm);
                     _database.SaveChanges();
-                    return Redirect("/Articles/Show/" + comm.ArticleId);
-                }
-
-                else
-                {
-                    var a = _database.Articles.FirstOrDefault(i => i.ArticleId == comm.ArticleId);
-                    return View(a);
                 }
 
             }
-
-            catch (Exception e)
+            catch (Exception)
             {
-                var a = _database.Articles.FirstOrDefault(i => i.ArticleId == comm.ArticleId);
-                return View(a);
+                // ignored
             }
+
+            return Redirect("/Articles/Show/" + comm.ArticleId);
         }
 
         [HttpGet]
@@ -258,7 +276,7 @@ namespace Crowd_knowledge_contribution.Controllers
         [Authorize(Roles = "Editor,Admin")]
         public ActionResult Edit(int id)
         {
-            var article = _database.Articles.FirstOrDefault(i => i.ArticleId == id);
+            var article = _database.Articles.OrderByDescending(i => i.VersionId).FirstOrDefault(i => i.ArticleId == id);
             article.Dom = GetAllDomains();
             if (article.UserId == User.Identity.GetUserId() || User.IsInRole("Admin"))
             {
@@ -283,19 +301,29 @@ namespace Crowd_knowledge_contribution.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var article = _database.Articles.FirstOrDefault(i => i.ArticleId == id);
-                    if (article.UserId == User.Identity.GetUserId() || User.IsInRole("Admin"))
+                    requestArticle.VersionId = _database.Articles
+                        .Where(article => article.ArticleId == requestArticle.ArticleId)
+                        .Select(article => article.VersionId).Prepend(0).Max() + 1;
+
+                    requestArticle.UserId = _database.Articles
+                        .FirstOrDefault(article => article.ArticleId == requestArticle.ArticleId)
+                        ?.UserId;
+
+                    if (requestArticle.VersionId == 1)
                     {
-                        if (TryUpdateModel(article))
-                        {
-                            article.Content = Sanitizer.GetSafeHtmlFragment(article.Content);
-                            article.Title = requestArticle.Title;
-                            article.Content = requestArticle.Content;
-                            article.DomainId = requestArticle.DomainId;
-                            //article.VersionId ++ ;
-                            _database.SaveChanges();
-                            TempData["message"] = "Operatiune adaugare articol: succes";
-                        }
+                        TempData["message"] = "Nu puteți edita un articol care nu există.";
+                        return RedirectToAction("Index");
+                    }
+
+                    if (requestArticle.UserId == User.Identity.GetUserId() || User.IsInRole("Admin"))
+                    {
+                        requestArticle.Content = Sanitizer.GetSafeHtmlFragment(requestArticle.Content);
+                        requestArticle.LastModified = DateTime.Now;
+
+                        _database.Articles.Add(requestArticle);
+                        _database.SaveChanges();
+                        TempData["message"] = "Operatiune adaugare articol: succes";
+
                         return RedirectToAction("Index");
                     }
                     else
@@ -323,24 +351,31 @@ namespace Crowd_knowledge_contribution.Controllers
         [Authorize(Roles = "Editor,Admin")]
         public ActionResult Delete(int id)
         {
-            var article = _database.Articles.FirstOrDefault(i => i.ArticleId == id);
-            ICollection<Comment> comments = _database.Comments.Where(x => x.ArticleId == article.ArticleId).ToArray();
+            var articles = _database.Articles.Where(i => i.ArticleId == id).ToList();
 
-            if (article.UserId == User.Identity.GetUserId() || User.IsInRole("Admin"))
+            if (articles.Count == 0)
+            {
+                TempData["message"] = "Nu există articolul cerut.";
+                return RedirectToAction("Index");
+            }
+
+            var firstArticle = articles[0];
+            ICollection<Comment> comments = _database.Comments.Where(x => x.ArticleId == firstArticle.ArticleId).ToArray();
+
+            if (firstArticle.UserId == User.Identity.GetUserId() || User.IsInRole("Admin"))
             {
                 foreach (var comment in comments)
                     _database.Comments.Remove(comment);
 
-                _database.Articles.Remove(article);
+                foreach (var article in articles)
+                    _database.Articles.Remove(article);
                 _database.SaveChanges();
                 TempData["message"] = "Articolul a fost sters";
                 return RedirectToAction("Index");
             }
-            else
-            {
-                TempData["message"] = "Nu aveti dreptul sa stergeti un articol care nu va apartine";
-                return RedirectToAction("Index");
-            }
+
+            TempData["message"] = "Nu aveti dreptul sa stergeti un articol care nu va apartine";
+            return RedirectToAction("Index");
         }
 
         [NonAction]

@@ -21,7 +21,11 @@ namespace Crowd_knowledge_contribution.Controllers
             ViewBag.DomainName = id;
             if (domainObject != null)
             {
-                var articles = _database.Articles.Where(article => article.DomainId == domainObject.DomainId);
+                var articles = _database.Articles
+                    .Include("Domain")
+                    .Include("User")
+                    .Where(article => article.DomainId == domainObject.DomainId)
+                    .Where(article => article.VersionId == _database.Articles.Where(a => a.ArticleId == article.ArticleId).Select(a => a.VersionId).Max());
                 ViewBag.Articles = articles.ToList();
             }
 
