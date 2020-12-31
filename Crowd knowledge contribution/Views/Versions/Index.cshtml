@@ -1,0 +1,51 @@
+﻿@using System.Web.UI.WebControls
+@using Crowd_knowledge_contribution.Models
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@if (ViewBag.Versions.Length == 0)
+{
+    <h2>Nu există articolul cerut.</h2>
+}
+else
+{
+    <h2>Versiuni articol @ViewBag.Versions[ViewBag.Versions.Length - 1].Title</h2>
+    var crtIx = 0;
+    foreach (Article version in ViewBag.Versions)
+    {
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="font-weight-bold">@version.Title</h3>
+                @if (!ViewBag.DefaultVersions[crtIx])
+                {
+                    using (Html.BeginForm(actionName: "SetDefault", controllerName: "Versions", method: FormMethod.Post, routeValues: new {id = version.ArticleId, version = version.VersionId}))
+                    {
+                        <button class="btn btn-sm btn-success" type="submit">Setează implicit</button>
+                    }
+                }
+                else
+                {
+                    <p>Implicit</p>
+                }
+            </div>
+            
+            <div class="panel-body">
+                <div class="article-content-wrapper">
+                    <p>Scris la: <p>         
+                    <i class="glyphicon glyphicon-time"></i>
+                    @version.LastModified
+                </div>
+            </div>
+            
+            <div class="panel-footer">
+                <a class="btn btn-success pull-left" href="/Articles/Show/@version.ArticleId?version=@version.VersionId">Vezi versiunea</a>
+                <div class="clearfix"></div>
+            </div>
+
+        </div>
+
+        crtIx++;
+    }
+}
