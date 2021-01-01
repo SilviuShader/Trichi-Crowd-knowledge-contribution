@@ -182,7 +182,7 @@ namespace Crowd_knowledge_contribution.Controllers
         public ActionResult Show(int id)
         {
             var version = 0;
-            if (Request.Params.Get("version") != null && User.IsInRole("Admin"))
+            if (Request.Params.Get("version") != null && (User.IsInRole("Admin") || User.IsInRole("Editor")))
             {
                 var versionString = Request.Params.Get("version").Trim();
                 int.TryParse(versionString, out version);
@@ -315,6 +315,12 @@ namespace Crowd_knowledge_contribution.Controllers
                         return RedirectToAction("Index");
                     }
 
+                    if (requestArticle.Protected && !User.IsInRole("Admin"))
+                    {
+                        TempData["message"] = "Articolul a fost protejat, prin urmare nu aveți dreptul la editare";
+                        return RedirectToAction("Index");
+                    }
+
                     if (requestArticle.UserId == User.Identity.GetUserId() || User.IsInRole("Admin"))
                     {
                         requestArticle.Content = Sanitizer.GetSafeHtmlFragment(requestArticle.Content);
@@ -378,6 +384,25 @@ namespace Crowd_knowledge_contribution.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Editor,Admin")]
+        public ActionResult Protect(int id, int version, bool setProtected)
+        {
+            var articles = _database.Articles.Where(article => article.ArticleId == id).ToArray();
+            if (articles.Length <= 0)
+                return Redirect("/Articles/Show/" + id + "?version=" + version);
+
+            if (articles[0].UserId == User.Identity.GetUserId() && !User.IsInRole("Admin"))
+                return Redirect("/Articles/Show/" + id + "?version=" + version);
+
+            foreach (var article in articles)
+                article.Protected = setProtected;
+
+            _database.SaveChanges();
+
+            return Redirect("/Articles/Show/" + id + "?version=" + version);
+        }
+
         [NonAction]
         private IEnumerable<SelectListItem> GetAllDomains()
         {
@@ -407,6 +432,7 @@ namespace Crowd_knowledge_contribution.Controllers
             }
 
             ViewBag.esteAdmin = User.IsInRole("Admin");
+            ViewBag.IsEditor = User.IsInRole("Editor");
             ViewBag.utilizatorCurent = User.Identity.GetUserId();
         }
     }

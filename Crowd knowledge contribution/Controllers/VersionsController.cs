@@ -11,7 +11,7 @@ namespace Crowd_knowledge_contribution.Controllers
     {
         private readonly ApplicationDbContext _database = new ApplicationDbContext();
         // GET: Versions
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Editor,Admin")]
         public ActionResult Index(int id)
         {
             var versions = _database.Articles.Where(article => article.ArticleId == id)
@@ -27,7 +27,7 @@ namespace Crowd_knowledge_contribution.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Editor,Admin")]
         public ActionResult SetDefault(int id, int version)
         {
             var crtArticle =

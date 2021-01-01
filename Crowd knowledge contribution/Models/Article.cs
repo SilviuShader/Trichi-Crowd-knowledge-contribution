@@ -28,6 +28,8 @@ namespace Crowd_knowledge_contribution.Models
 
         public string UserId { get; set; }
 
+        public bool Protected { get; set; }
+
         public virtual ApplicationUser User { get; set; }
 
         public IEnumerable<SelectListItem> Dom { get; set; }

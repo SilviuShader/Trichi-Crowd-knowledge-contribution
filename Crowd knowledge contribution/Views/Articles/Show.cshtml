@@ -10,22 +10,48 @@
 
 <div class="panel panel-default">
     @Html.Partial("ArticleInfo", Model)
-    @if (ViewBag.afisareButoane && Model.UserId == ViewBag.utilizatorCurent || ViewBag.esteAdmin)
+    @if (ViewBag.afisareButoane)
     {
-        <div class="panel-footer">
-            <a class="btn btn-success pull-left" href="/Articles/Edit/@Model.ArticleId">Modifica articol</a>
-            @if (ViewBag.esteAdmin)
+    <div class="panel-footer">
+        @if (Model.UserId == ViewBag.utilizatorCurent || ViewBag.esteAdmin)
+        {
+            if (ViewBag.esteAdmin || !Model.Protected)
             {
-                <a class="btn btn-success pull-left" href="/Versions/Index/@Model.ArticleId">Versiuni</a>
+                <a class="btn btn-success pull-left" href="/Articles/Edit/@Model.ArticleId">Modifica articol</a>
             }
+        }
+        @if (ViewBag.IsEditor || ViewBag.esteAdmin)
+        {
+            <a class="btn btn-success pull-left" href="/Versions/Index/@Model.ArticleId">Versiuni</a>
+            if (Model.UserId != ViewBag.utilizatorCurent || ViewBag.esteAdmin)
+            {
+                if (!Model.Protected)
+                {
+                    using (Html.BeginForm("Protect", "Articles", method: FormMethod.Post, routeValues: new {id = @Model.ArticleId, version = @Model.VersionId, setProtected = true } ))
+                    {
+                        <button class="btn btn-success pull-left" type="submit">Protejează</button>
+                    }
+                }
+                else
+                {
+                    using (Html.BeginForm("Protect", "Articles", method: FormMethod.Post, routeValues: new {id = @Model.ArticleId, version = @Model.VersionId, setProtected = false } ))
+                    {
+                        <button class="btn btn-success pull-left" type="submit">Elimină protejarea</button>
+                    }
+                }
+            }
+        }
 
-            @using (Html.BeginForm(actionName: "Delete", controllerName: "Articles", method: FormMethod.Post, routeValues: new { id = @Model.ArticleId, version = @Model.VersionId }))
+        @if (Model.UserId == ViewBag.utilizatorCurent || ViewBag.esteAdmin)
+        {
+            using (Html.BeginForm(actionName: "Delete", controllerName: "Articles", method: FormMethod.Post, routeValues: new { id = @Model.ArticleId, version = @Model.VersionId }))
             {
                 @Html.HttpMethodOverride(HttpVerbs.Delete)
                 <button class="btn btn-danger pull-right" type="submit">Sterge articol</button>
             }
-            <div class="clearfix"></div>
-        </div>
+        }
+        <div class="clearfix"></div>
+    </div>
     }
 </div>
 
