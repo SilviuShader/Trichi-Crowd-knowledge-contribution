@@ -1,11 +1,55 @@
-﻿
+﻿@using System.Text.RegularExpressions
+@{
+    ViewBag.ChaptersCount = 1;
+    ViewBag.Chapters = new List<string> { "" };
+    ViewBag.Titles = new List<string> { "" };
+    if (@Model.Content != null)
+    {
+        var chapterContents = Regex.Split((string)@Model.Content, @"\[chapter\][\s\S]+?\[\/chapter\]", RegexOptions.IgnoreCase).ToArray();
+        ViewBag.ChaptersCount = chapterContents.Length - 1;
+
+        if (ViewBag.ChaptersCount != 0)
+        {
+            ViewBag.Chapters = chapterContents.Skip(1).ToList();
+
+
+            var titlesMatch = Regex.Matches((string)@Model.Content, @"\[chapter\][\s\S]+?\[\/chapter\]", RegexOptions.IgnoreCase).Cast<Match>()
+                .Select(m => m.Value)
+                .ToArray();
+
+            ViewBag.Titles = new List<string>();
+
+            foreach (var title in titlesMatch)
+            {
+                string newTitle;
+                newTitle = title.Replace("[/chapter]", "");
+                newTitle = newTitle.Replace("[chapter]", "");
+                ViewBag.Titles.Add(newTitle);
+            }
+        }
+        else
+        {
+            ViewBag.ChaptersCount = 1;
+        }
+    }
+}
+
 <div class="panel-heading">
     <h3 class="font-weight-bold">@Model.Title</h3>
 </div>
 
 <div class="panel-body">
     <div class="article-content-wrapper">
-        @Html.Raw(Model.Content)
+        @{
+            var i = 0;
+            foreach (var chapter in @ViewBag.Chapters)
+            {
+                <h1>@ViewBag.Titles[i]</h1>
+                @Html.Raw(chapter)
+                <br/>
+                i++;
+            }
+        }
     </div>
 </div>
 
@@ -18,7 +62,7 @@
         </a>
     </div>
 
-    <br/>
+    <br />
 
     <div>
         <i class="glyphicon glyphicon-user"></i>
@@ -30,6 +74,6 @@
         @Model.LastModified
     </span>
 
-    <br/>
+    <br />
 
 </div>

@@ -1,5 +1,42 @@
-﻿@model Crowd_knowledge_contribution.Models.Article
+﻿@using System.Text.RegularExpressions
+@model Crowd_knowledge_contribution.Models.Article
 
+@{
+    ViewBag.ChaptersCount = 1;
+    ViewBag.Chapters = new List<string> { "" };
+    ViewBag.Titles = new List<string> { "" };
+    if (@Model.Content != null)
+    {
+        var chapterContents = Regex.Split(@Model.Content, @"\[chapter\][\s\S]+?\[\/chapter\]", RegexOptions.IgnoreCase).ToArray();
+        ViewBag.ChaptersCount = chapterContents.Length - 1;
+
+        if (ViewBag.ChaptersCount != 0)
+        {
+            ViewBag.Chapters = chapterContents.Skip(1).ToList();
+
+
+            var titlesMatch = Regex.Matches(@Model.Content, @"\[chapter\][\s\S]+?\[\/chapter\]", RegexOptions.IgnoreCase).Cast<Match>()
+                .Select(m => m.Value)
+                .ToArray();
+
+            ViewBag.Titles = new List<string>();
+
+            foreach (var title in titlesMatch)
+            {
+                string newTitle;
+                newTitle = title.Replace("[/chapter]", "");
+                newTitle = newTitle.Replace("[chapter]", "");
+                ViewBag.Titles.Add(newTitle);
+            }
+        }
+        else
+        {
+            ViewBag.ChaptersCount = 1;
+        }
+    }
+}
+
+<button class="btn btn-sm btn-success" onclick="addChapter()">Adaugă capitol</button>
 
 @using (Html.BeginForm(actionName: "Edit", controllerName: "Articles"))
 {
@@ -17,10 +54,17 @@
 
     @Html.Label("Content", "Continut Articol")
     <br />
-    @Html.TextArea("Content", @Model.Content, new { @class = "form-control summernote" })
-    @Html.ValidationMessageFor(m => m.Content, "", new { @class = "text-danger" })
-    <br />
-    <br />
+    var i = 0;
+    foreach (string chapter in ViewBag.Chapters)
+    {
+        @Html.TextArea("ChapterTitle_" + i, (string)ViewBag.Titles[i], null);
+        @Html.TextArea("Content_" + i, chapter, new { @class = "form-control summernote" });
+        <br />
+        <br />
+        i++;
+    }
+
+    <div id="new-chapters"></div>
 
     @Html.HiddenFor(m => m.LastModified)
     <br />
@@ -36,3 +80,38 @@
     <button class="btn btn-sm btn-success" type="submit">Modifica articol</button>
 }
 
+<script>
+    var referenceElement = document.getElementById("new-chapters");
+    var chapterCount = @ViewBag.ChaptersCount;
+
+    function addChapter() {
+        var textArea = document.createElement("textarea");
+        textArea.setAttribute("name", "ChapterTitle_" + chapterCount);
+        textArea.setAttribute("cols", "20");
+        textArea.setAttribute("rows", "2");
+        referenceElement.parentNode.insertBefore(textArea, referenceElement.nextSibling);
+        referenceElement = textArea;
+
+        var contentArea = document.createElement("textarea");
+        contentArea.setAttribute("class", "form-control summernote");
+        contentArea.setAttribute("name", "Content_" + chapterCount);
+        contentArea.setAttribute("cols", "20");
+        contentArea.setAttribute("rows", "2");
+        referenceElement.parentNode.insertBefore(contentArea, referenceElement.nextSibling);
+        referenceElement = contentArea;
+
+        for (var i = 0; i < 2; i++) {
+            var br1 = document.createElement("br");
+            referenceElement.parentNode.insertBefore(br1, referenceElement.nextSibling);
+            referenceElement = br1;
+        }
+
+        chapterCount = chapterCount + 1;
+
+        $(".summernote").summernote({
+            height: 300,
+            minHeight: 200,
+            focus: true,
+        });
+    }
+</script>

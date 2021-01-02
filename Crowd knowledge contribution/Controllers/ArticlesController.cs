@@ -2,11 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Web;
 using System.Web.Mvc;
 using Crowd_knowledge_contribution.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.Security.Application;
+using Newtonsoft.Json;
 
 namespace Crowd_knowledge_contribution.Controllers
 {
@@ -239,18 +244,85 @@ namespace Crowd_knowledge_contribution.Controllers
             return View(article);
         }
 
+        dynamic ParseFormData(string formData)
+        {
+            dynamic result = new System.Dynamic.ExpandoObject();
+            var splitChars = new [] {'&'};
+            var properties = formData.Split(splitChars);
+
+            foreach (var property in properties)
+            {
+                var nameValue = property.Split(new[] {'='}, 2);
+                if (nameValue[0] != "files")
+                    ((IDictionary<string, object>)result).Add(nameValue[0], HttpUtility.UrlDecode(nameValue[1]));
+            }
+
+            return result;
+        }
+
+        private Article GetArticleFromDynamic(dynamic dynamicData)
+        {
+            var article = new Article();
+
+            article.Content = "";
+
+            if (((IDictionary<string, object>) dynamicData).ContainsKey("Title"))
+                article.Title = dynamicData.Title;
+
+            var i = 0;
+            while (((IDictionary<string, object>) dynamicData).ContainsKey("ChapterTitle_" + i))
+            {
+                if (((IDictionary<string, object>) dynamicData).ContainsKey("Content_" + i))
+                {
+                    if ((string)((IDictionary<string, object>) dynamicData)["ChapterTitle_" + i] != "" ||
+                        (string)((IDictionary<string, object>) dynamicData)["Content_" + i] != "")
+                    {
+                        article.Content += "[chapter]" +
+                                           ((IDictionary<string, object>) dynamicData)["ChapterTitle_" + i] +
+                                           "[/chapter]";
+                        article.Content += ((IDictionary<string, object>) dynamicData)["Content_" + i];
+                    }
+
+                    i++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            article.DomainId = -1;
+
+            if (((IDictionary<string, object>) dynamicData).ContainsKey("DomainId"))
+            {
+                if (int.TryParse(dynamicData.DomainId, out int domainId))
+                {
+                    article.DomainId = domainId;
+                }
+            }
+
+            return article;
+        }
 
         [HttpPost]
         [ValidateInput(false)]
         [Authorize(Roles = "Editor,Admin")]
-        public ActionResult New(Article article)
+        public ActionResult New(int? id)
         {
+            var req = Request.InputStream;
+            req.Seek(0, System.IO.SeekOrigin.Begin);
+            var rawText = new StreamReader(req).ReadToEnd();
+
+            var dataObject = ParseFormData(rawText);
+            Article article = GetArticleFromDynamic(dataObject);
+
             var maxId = _database.Articles.Select(art => art.ArticleId).Prepend(0).Max();
             article.ArticleId = maxId + 1;
             article.UserId = User.Identity.GetUserId();
             article.Dom = GetAllDomains();
             article.LastModified = DateTime.Now;
             article.VersionId = 1;
+
             try
             {
                 if (ModelState.IsValid)
@@ -267,10 +339,12 @@ namespace Crowd_knowledge_contribution.Controllers
                     return View(article);
                 }
             }
-            catch (Exception )
+            catch (Exception)
             {
                 return View(article);
-            }   
+            }
+
+            return RedirectToAction("Index");
         }
 
         [Authorize(Roles = "Editor,Admin")]
@@ -294,8 +368,16 @@ namespace Crowd_knowledge_contribution.Controllers
         [HttpPut]
         [ValidateInput(false)]
         [Authorize(Roles = "Editor,Admin")]
-        public ActionResult Edit(int id, Article requestArticle)
+        public ActionResult Edit(int id, object junk)
         {
+            var req = Request.InputStream;
+            req.Seek(0, System.IO.SeekOrigin.Begin);
+            var rawText = new StreamReader(req).ReadToEnd();
+
+            var dataObject = ParseFormData(rawText);
+            Article requestArticle = GetArticleFromDynamic(dataObject);
+            requestArticle.ArticleId = id;
+            
             requestArticle.Dom = GetAllDomains();
             try
             {
