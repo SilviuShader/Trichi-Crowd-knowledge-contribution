@@ -34,11 +34,11 @@
     }
 }
 
-<div class="panel-heading">
+<div class="panel-heading-custom panel-heading heading">
     <h3 class="font-weight-bold">@Model.Title</h3>
 </div>
 
-<div class="panel-body">
+<div class="panel-body-custom panel-body">
     <div class="article-content-wrapper">
         @{
             var i = 0;
@@ -55,25 +55,19 @@
 
 <div class="article-meta">
 
-    <div>
-        <a class="btn btn-primary" href="/DomainArticles/Index/@Model.Domain.DomainName">
+    <div class="panel-bottom-details">
+        <i class="glyphicon glyphicon-user"></i>
+        <i>Scris de </i> <strong> @Model.User.UserName </strong>
+        <br/>
+        <i class="glyphicon glyphicon-time"></i>
+        @Model.LastModified
+        <br/>
+        <a class="custom-a" href="/DomainArticles/Index/@Model.Domain.DomainName">
             <i class="glyphicon glyphicon-globe"></i>
             @Model.Domain.DomainName
         </a>
     </div>
-
-    <br />
-
-    <div>
-        <i class="glyphicon glyphicon-user"></i>
-        <i>articol scris de</i> <strong> @Model.User.UserName </strong>
-    </div>
-
-    <span class="label label-success">
-        <i class="glyphicon glyphicon-time"></i>
-        @Model.LastModified
-    </span>
-
-    <br />
+    
+    <br/>
 
 </div>

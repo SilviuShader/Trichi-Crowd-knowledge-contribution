@@ -6,51 +6,52 @@
     ViewBag.Title = "Editare rol utilizator";
 }
 
-<ol class="breadcrumb">
+<div class="custom-div">
     <li><h3>@ViewBag.Title</h3></li>
-</ol>
+</div>
 
 @using (Html.BeginForm(actionName: "Edit", controllerName: "Users", routeValues: new { id = @Model.Id }))
 {
-    @Html.HttpMethodOverride(HttpVerbs.Put)
+    <div class="custom-div">
+        @Html.HttpMethodOverride(HttpVerbs.Put)
 
-    <br />
+        <br />
 
-    <i class="glyphicon glyphicon-user"></i>
-    @Html.Label("UserName", "Nume utilizator", new { @class = "" })
+        <i class="glyphicon glyphicon-user"></i>
+        @Html.Label("UserName", "Nume utilizator", new { @class = "" })
 
-    <br />
+        <br />
 
-    @Html.EditorFor(m => m.UserName)
+        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control form-control-custom" })
 
-    <br /><br />
+        <br /><br />
 
-    <i class="glyphicon glyphicon-envelope"></i>
-    @Html.Label("Email", "Email utilizator", new { @class = "" })
+        <i class="glyphicon glyphicon-envelope"></i>
+        @Html.Label("Email", "Email utilizator", new { @class = "" })
 
-    <br />
+        <br />
 
-    @Html.EditorFor(m => m.Email)
+        @Html.TextBoxFor(m => m.Email, new { @class = "form-control form-control-custom" })
 
-    <br /><br />
+        <br /><br />
 
-    <i class="glyphicon glyphicon-phone"></i>
-    @Html.Label("PhoneNumber", "Numar telefon")
+        <i class="glyphicon glyphicon-phone"></i>
+        @Html.Label("PhoneNumber", "Numar telefon")
 
-    <br />
+        <br />
 
-    @Html.EditorFor(m => m.PhoneNumber)
+        @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control form-control-custom" })
 
-    <br /><br />
+        <br /><br />
 
-    <i class="glyphicon glyphicon-th-list"></i>
-    <label>Selectati rolul</label>
-    @Html.DropDownList("newRole", new SelectList(Model.AllRoles, "Value", "Text", ViewBag.userRole), null, new { @class = "form-control" })
+        <i class="glyphicon glyphicon-th-list"></i>
+        <label>Selectati rolul</label>
+        @Html.DropDownList("newRole", new SelectList(Model.AllRoles, "Value", "Text", ViewBag.userRole), null, new { @class = "form-control form-control-custom" })
 
-    <br />
+        <br />
 
-    <button class="btn btn-sm btn-success" type="submit">Modifica datele utilizatorului</button>
+        <button class="btn btn-sm btn-primary" type="submit">Modifica datele utilizatorului</button>
 
-
+    </div>
 }
 

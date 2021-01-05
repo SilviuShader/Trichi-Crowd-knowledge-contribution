@@ -4,14 +4,18 @@
     ViewBag.Title = "Edit";
 }
 
+<div class ="custom-div">
 <h2>Editare comentariu</h2>
+</div>
 <form method="post" action="/Comments/Edit/@ViewBag.Comment.CommentId">
-    @Html.HttpMethodOverride(HttpVerbs.Put)
-    <label>Continut comentariu</label>
-    <br />
-    <input type ="hidden" name="UserId" value="@User.Identity.GetUserId()">
-    <textarea name="Content">@ViewBag.Comment.Content</textarea>
-    <br />
-    <button class="btn btn-success" type="submit">Editeaza comentariu</button>
+    <div class="custom-div">
+        @Html.HttpMethodOverride(HttpVerbs.Put)
+        <label>Conținut comentariu</label>
+        <br />
+        <input type="hidden" name="UserId" value="@User.Identity.GetUserId()">
+        <textarea name="Content" class="form-control form-control-custom">@ViewBag.Comment.Content</textarea>
+        <br />
+        <button class="btn btn-primary" type="submit">Editeaza comentariu</button>
+    </div>
 </form>
 

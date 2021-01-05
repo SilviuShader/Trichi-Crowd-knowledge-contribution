@@ -2,17 +2,18 @@
 @{
     ViewBag.Title = "Domeniu";
 }
-
-<h2>@ViewBag.Title</h2>
-<p>@Model.DomainName</p>
+<div class="custom-div">
+    <h2>@ViewBag.Title</h2>
+    <p>@Model.DomainName</p>
+</div>
 
 <form method="post" action="/Domains/Delete/@Model.DomainId">
     @Html.HttpMethodOverride(HttpVerbs.Delete)
-    <button class="btn btn-success" type="submit">Șterge domeniul</button>
+    <button class="btn btn-danger" type="submit">Șterge domeniul</button>
 
 </form>
 <br />
-<a class="btn btn-success" href="/Domains/Index/">Afișare listă domenii</a>
+<a class="btn btn-primary" href="/Domains/Index/">Afișare listă domenii</a>
 
 <br />
 <hr />

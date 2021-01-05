@@ -3,34 +3,36 @@
     ViewBag.Title = "Afisare utilizatori";
 }
 
-<ol class="breadcrumb">
-    <li><h3>@ViewBag.Title</h3></li>
-</ol>
+<div class="custom-div">
+    <h3>@ViewBag.Title</h3>
+</div>
 
 @foreach (var user in ViewBag.UsersList)
 {
-    <div class="panel-heading">Nume utilizator: @user.UserName</div>
+    <div class="custom-div">
+        <div class="panel-heading">Nume utilizator: @user.UserName</div>
 
-    <div class="panel-body">
+        <div class="panel-body">
 
-        <i class="glyphicon glyphicon-envelope"></i> Email utilizator: <span class="label label-default">@user.Email</span>
+            <i class="glyphicon glyphicon-envelope"></i> Email utilizator: @user.Email
+
+            <br /><br />
+
+            @if (@user.PhoneNumber != null)
+            {
+                <i class="glyphicon glyphicon-phone"></i>@:Telefon utilizator: @user.PhoneNumber
+            }
+
+        </div>
+
+        <div class="custom-div">
+
+            <a class="btn btn-sm btn-primary" href="/Users/Edit/@user.Id"> Editare utilizator</a>
+            <a class="btn btn-sm btn-primary" href="/Users/Show/@user.Id"> Vizualizare utilizator</a>
+
+        </div>
+        <hr />
 
         <br /><br />
-
-        @if (@user.PhoneNumber != null)
-        {
-            <i class="glyphicon glyphicon-phone"></i>@:Telefon utilizator:<span class="label label-default">@user.PhoneNumber</span>
-
-        }
-
     </div>
-
-    <div class="panel-footer">
-
-        <a class="btn btn-sm btn-success" href="/Users/Edit/@user.Id"> Editare utilizator</a>
-        <a class="btn btn-sm btn-success" href="/Users/Show/@user.Id"> Vizualizare utilizator</a>
-
-    </div>
-
-    <br /><br />
 }

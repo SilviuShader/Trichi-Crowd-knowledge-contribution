@@ -36,28 +36,34 @@
     }
 }
 
-<button class="btn btn-sm btn-success" onclick="addChapter()">Adaugă capitol</button>
+<div class="custom-div">
+    <h2>Editează articol</h2>
+</div>
+
+<button class="btn btn-sm btn-primary" onclick="addChapter()">Adaugă capitol</button>
 
 @using (Html.BeginForm(actionName: "Edit", controllerName: "Articles"))
 {
-    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-    @Html.HttpMethodOverride(HttpVerbs.Put)
+    <div class="custom-div">
+        @Html.ValidationSummary(false, "", new { @class = "text-danger text-danger-custom" })
+        @Html.HttpMethodOverride(HttpVerbs.Put)
 
-    @Html.HiddenFor(m => m.ArticleId)
-    <br />
-    @Html.Label("Title", "Titlu Articol")
-    <br />
-    @Html.Editor("Title")
-    @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
-    <br />
-    <br />
+        @Html.HiddenFor(m => m.ArticleId)
+        <br />
+        @Html.Label("Title", "Titlu Articol")
+        <br />
+        @Html.TextBoxFor(m => m.Title, Model.Title, new { @class = "form-control form-control-custom" })
+        @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger text-danger-custom" })
+        <br />
+        <br />
 
-    @Html.Label("Content", "Continut Articol")
-    <br />
+        @Html.Label("Content", "Continut Articol")
+        <br />
+    </div>
     var i = 0;
     foreach (string chapter in ViewBag.Chapters)
     {
-        @Html.TextArea("ChapterTitle_" + i, (string)ViewBag.Titles[i], null);
+        @Html.TextArea("ChapterTitle_" + i, (string)ViewBag.Titles[i], new { @class = "form-control form-control-custom" });
         @Html.TextArea("Content_" + i, chapter, new { @class = "form-control summernote" });
         <br />
         <br />
@@ -65,19 +71,20 @@
     }
 
     <div id="new-chapters"></div>
+    <div class="custom-div">
+        @Html.HiddenFor(m => m.LastModified)
+        <br />
 
-    @Html.HiddenFor(m => m.LastModified)
-    <br />
+        <label>Selectați domeniul</label>
+        @Html.DropDownListFor(m => m.DomainId, new SelectList(Model.Dom, "Value", "Text"),
+            "Selectați domeniul", new { @class = "form-control form-control-custom" })
+        @Html.ValidationMessage("DomainId", null, new { @class = "text-danger text-danger-custom" })
 
-    <label>Selectați domeniul</label>
-    @Html.DropDownListFor(m => m.DomainId, new SelectList(Model.Dom, "Value", "Text"),
-        "Selectați domeniul", new { @class = "form-control" })
-    @Html.ValidationMessage("DomainId", null, new { @class = "text-danger" })
+        <br />
+        <br />
 
-    <br />
-    <br />
-
-    <button class="btn btn-sm btn-success" type="submit">Modifica articol</button>
+        <button class="btn btn-sm btn-primary" type="submit">Modifica articol</button>
+    </div>
 }
 
 <script>
@@ -86,11 +93,16 @@
 
     function addChapter() {
         var textArea = document.createElement("textarea");
+        textArea.setAttribute("class", "form-control form-control-custom");
         textArea.setAttribute("name", "ChapterTitle_" + chapterCount);
         textArea.setAttribute("cols", "20");
         textArea.setAttribute("rows", "2");
         referenceElement.parentNode.insertBefore(textArea, referenceElement.nextSibling);
         referenceElement = textArea;
+
+        var br = document.createElement("br");
+        referenceElement.parentNode.insertBefore(br, referenceElement.nextSibling);
+        referenceElement = br;
 
         var contentArea = document.createElement("textarea");
         contentArea.setAttribute("class", "form-control summernote");

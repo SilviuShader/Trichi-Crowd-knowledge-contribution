@@ -4,15 +4,15 @@
     ViewBag.Title = "Detalii utilizator";
 }
 
-<ol class="breadcrumb">
+<div class="custom-div">
     <li><h3>@ViewBag.Title</h3></li>
-</ol>
+</div>
 
-<div class="panel-heading">Nume utilizator: @Model.UserName</div>
+<div class="custom-div">Nume utilizator: @Model.UserName</div>
 
-<div class="panel-body">
+<div class="custom-div">
 
-    <i class="glyphicon glyphicon-envelope"></i> Email utilizator: <span class="label label-default">@Model.Email</span>
+    <i class="glyphicon glyphicon-envelope"></i> Email utilizator: @Model.Email
     <br />
     <i class="glyphicon glyphicon-th-list"></i> Rol utilizator: @ViewBag.roleName
 
@@ -20,23 +20,19 @@
 
     @if (@Model.PhoneNumber != null)
     {
-        <i class="glyphicon glyphicon-phone"></i>@:Telefon utilizator:<span class="label label-default">@Model.PhoneNumber</span>
-
-
-
-
+        <i class="glyphicon glyphicon-phone"></i>@:Telefon utilizator: @Model.PhoneNumber
     }
 
 </div>
 
 @if ((string)Model.Id != ViewBag.utilizatorCurent)
 {
-    <div class="panel-footer">
+    <div class="panel-footer panel-footer-custom">
         @using (Html.BeginForm(actionName: "Delete", controllerName: "Users", routeValues: new { id = @Model.Id }))
         {
             @Html.HttpMethodOverride(HttpVerbs.Delete)
             <br />
-            <button class="btn btn-success" type="submit">Sterge utilizator</button>
+            <button class="btn btn-danger" type="submit">Șterge utilizator</button>
 
         }
     </div>

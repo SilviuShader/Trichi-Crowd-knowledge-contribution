@@ -1,18 +1,21 @@
 ﻿@model Crowd_knowledge_contribution.Models.Domain
 @{
-    ViewBag.Title = "Adăugare domeniu";
+    ViewBag.Title = "Adaugă domeniu";
 }
-
-<h2>@ViewBag.Title</h2>
+<div class="custom-div">
+    <h2>@ViewBag.Title</h2>
+</div>
 
 @using (Html.BeginForm(actionName: "New", controllerName: "Domains"))
 {
-    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    @Html.ValidationSummary(false, "", new { @class = "text-danger text-danger-custom" })
 
-    @Html.Label("DomainName", "Denumire Domeniu")
+    <div class="custom-div">
+        @Html.Label("DomainName", "Nume domeniu")
+    </div>
     <br />
-    @Html.TextBox("DomainName", null, new { @class = "form-control" })
-    @Html.ValidationMessageFor(m => m.DomainName, null, new { @class = "text-danger" })
+    @Html.TextBox("DomainName", null, new { @class = "form-control form-control-custom" })
+    @Html.ValidationMessageFor(m => m.DomainName, null, new { @class = "text-danger text-danger-custom" })
     <br />
     <br />
 

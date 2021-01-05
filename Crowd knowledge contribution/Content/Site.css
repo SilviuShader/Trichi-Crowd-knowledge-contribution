@@ -1,6 +1,7 @@
 ﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
+    background: black;
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -21,4 +22,146 @@ input,
 select,
 textarea {
     max-width: 280px;
+}
+
+.navbar-custom {
+    background-color: #ffa607;
+}
+
+.navbar-custom .navbar-brand,
+.navbar-custom .navbar-text
+.navbar-custom .navbar-navbar-nav,
+.navbar-custom li a {
+    color: black;
+}
+
+.navbar-custom .navbar-brand,
+.navbar-custom .navbar-text,
+.navbar-custom li a:hover {
+    background: black;
+    color: #ffa607;
+}
+
+.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+    background-color: #ffa607 !important;
+    color: black;
+    border-color: black;
+}
+
+.btn-danger, .btn-danger:hover, .btn-danger:active, .btn-danger:visited {
+    background-color: #ff006c !important;
+    color: black;
+    border-color: black;
+}
+
+.form-control-custom {
+    background-color: #141414;
+    color: #6a07ff;
+    border-color: black;
+}
+
+.form-control-custom::placeholder {
+    color: #6a07ff;
+}
+
+.panel-info > .panel-heading-custom {
+    background: #5f428a;
+    color: white;
+    border: black;
+}
+
+.panel-info > .panel-body-custom {
+    background: #141414;
+    color: white;
+    border: black;
+}
+
+.panel > .panel-body-custom {
+    background: #141414;
+    color: white;
+    border: black;
+}
+
+.panel-custom {
+    border: black;
+    background: #141414
+}
+
+.panel-info-custom {
+    border: black;
+    background: #141414
+}
+
+.panel-default > .panel-heading-custom {
+    background: #5f428a;
+    color: white;
+    border: black;
+}
+
+.panel-default > .panel-body-custom {
+    background: #141414;
+    color: white;
+    border: black;
+}
+
+.panel-default-custom {
+    border: black;
+    background: #141414
+}
+
+.panel-bottom-details {
+    color: #6a07ff;
+    background: black;
+}
+
+.custom-a {
+    color: #ffa607;
+}
+
+.custom-a:hover {
+    color: white;
+}
+
+.custom-delete-a {
+    color: #ff006c;
+}
+
+.custom-delete-a:hover {
+    color: white;
+}
+
+.panel-footer-custom {
+    background: #141414;
+}
+
+.custom-div {
+    color: #6a07ff;
+}
+
+.custom-navigation {
+    color: #ffa607;
+    background: #141414;
+    border-color: black;
+}
+
+.custom-pagination {
+    color: #ffa607;
+    background: #141414;
+    border-color: black;
+}
+
+.pagination .custom-a {
+    color: #ffa607;
+    background: #141414;
+    border-color: black;
+}
+
+.pagination .custom-a:hover {
+    color: white;
+    background: #141414;
+    border-color: black;
+}
+
+.text-danger-custom {
+    color: #ff006c;
 }

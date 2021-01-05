@@ -2,19 +2,21 @@
 @{
     ViewBag.Title = "Editare domeniu";
 }
-
-<h2>@ViewBag.Title</h2>
+<div class="custom-div">
+    <h2>@ViewBag.Title</h2>
+</div>
 
 <form method="post" action="/Domains/Edit/@Model.DomainId">
 
     @Html.HttpMethodOverride(HttpVerbs.Put)
 
     @Html.HiddenFor(m => m.DomainId)
-
-    @Html.Label("DomainName", "Denumire domeniu")
+    <div class="custom-div">
+        @Html.Label("DomainName", "Nume domeniu")
+    </div>
     <br />
-    @Html.Editor("DomainName")
+    @Html.TextBoxFor(m => m.DomainName, new { @class = "form-control form-control-custom" })
     <br /><br />
 
-    <button class="btn btn-success" type="submit">Modifică domeniu</button>
+    <button class="btn btn-primary" type="submit">Modifică domeniu</button>
 </form>

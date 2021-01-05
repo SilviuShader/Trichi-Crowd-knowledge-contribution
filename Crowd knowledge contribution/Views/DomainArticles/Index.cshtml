@@ -20,21 +20,25 @@
 
     if (!validPage)
     {
-        <h1>Nu există articole din domeniul @ViewBag.DomainName</h1>
-        <br/> 
-        <br/>
+        <div class ="custom-div">
+            <h1>Nu există articole din domeniul @ViewBag.DomainName</h1>
+            <br/> 
+            <br/>
+        </div>
     }
     else
     {
-        <h1>@ViewBag.DomainName</h1>
+        <div class ="custom-div">
+            <h1>@ViewBag.DomainName</h1>
+        </div>
         <br/> 
         <br/>
         foreach (Article article in ViewBag.Articles)
         {
-            <div class="panel panel-default">
+            <div class="panel panel-default panel-default-custom">
                 @Html.Partial("ArticleInfo", article)
-                <div class="panel-footer">
-                    <a class=" btn btn-sm btn btn-success" href="/Articles/Show/@article.ArticleId">Afișare articol</a>
+                <div class="panel-footer panel-footer-custom">
+                    <a class=" btn btn-sm btn btn-primary" href="/Articles/Show/@article.ArticleId">Afișare articol</a>
                 </div>
             </div>
         }

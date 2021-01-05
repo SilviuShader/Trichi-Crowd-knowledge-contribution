@@ -5,8 +5,8 @@
 
 @{
     ViewBag.ChaptersCount = 1;
-    ViewBag.Chapters = new List<string> {""};
-    ViewBag.Titles = new List<string> {""};
+    ViewBag.Chapters = new List<string> { "" };
+    ViewBag.Titles = new List<string> { "" };
     if (@Model.Content != null)
     {
         var chapterContents = Regex.Split(@Model.Content, @"\[chapter\][\s\S]+?\[\/chapter\]", RegexOptions.IgnoreCase).ToArray();
@@ -38,77 +38,89 @@
     }
 }
 
-<h2>Adăugare articol</h2>
-
-<button class="btn btn-sm btn-success" onclick="addChapter()">Adaugă capitol</button>
+<div class="custom-div">
+    <h2>Adaugă articol</h2>
+</div>
+<button class="btn btn-sm btn-primary" onclick="addChapter()">Adaugă capitol</button>
 
 @using (Html.BeginForm(actionName: "New", controllerName: "Articles"))
 {
-    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    <div class="custom-div">
+        @Html.ValidationSummary(false, "", new { @class = "text-danger text-danger-custom" })
 
-    @Html.Label("Title", "Titlu Articol")
-    <br />
-    @Html.TextBoxFor(m => m.Title, Model.Title, new { @class = "form-control" });
-    @Html.ValidationMessageFor(m => m.Title, null, new { @class = "text-danger" })
-    <br />
-    <br />
+        @Html.Label("Title", "Titlu Articol")
+        <br />
+        @Html.TextBoxFor(m => m.Title, Model.Title, new { @class = "form-control form-control-custom" })
+        @Html.ValidationMessageFor(m => m.Title, null, new { @class = "text-danger text-danger-custom" })
+        <br />
+        <br />
 
-    @Html.Label("Content", "Conținut Articol")
-    <br />
+        @Html.Label("Content", "Conținut Articol")
+        <br />
+    </div>
+
     var i = 0;
     foreach (string chapter in ViewBag.Chapters)
     {
-        @Html.TextArea("ChapterTitle_"+i, (string)ViewBag.Titles[i], null);
-        @Html.TextArea("Content_"+i, chapter, new {@class = "form-control summernote"});
-        <br />
-        <br />
-        i++;
+    @Html.TextArea("ChapterTitle_" + i, (string)ViewBag.Titles[i], new { @class = "form-control form-control-custom" });
+    <br />
+    @Html.TextArea("Content_" + i, chapter, new { @class = "form-control summernote" });
+    <br />
+    <br />
+    i++;
     }
 
     <div id="new-chapters"></div>
 
-    <label>Selectați domeniul</label>
-    @Html.DropDownListFor(m => m.DomainId, new SelectList(Model.Dom, "Value", "Text"),
-        "Selectați domeniul", new { @class = "form-control" })
-    @Html.ValidationMessageFor(m => m.DomainId, null, new { @class = "text-danger" })
+    <div class="custom-div">
+        <label>Selectați domeniul</label>
+        @Html.DropDownListFor(m => m.DomainId, new SelectList(Model.Dom, "Value", "Text"),
+            "Selectați domeniul", new { @class = "form-control form-control-custom" })
+        @Html.ValidationMessageFor(m => m.DomainId, null, new { @class = "text-danger text-danger-custom" })
 
-    <br />
-    <br />
-    <button class="btn btn-sm btn-success" type="submit">Adaugă articol</button>
+        <br />
+        <br />
+        <button class="btn btn-sm btn-primary" type="submit">Adaugă articol</button>
+    </div>
 }
 
 <script>
-    var referenceElement = document.getElementById("new-chapters");
-    var chapterCount = @ViewBag.ChaptersCount;
+var referenceElement = document.getElementById("new-chapters");
+var chapterCount = @ViewBag.ChaptersCount;
 
-    function addChapter() {
-        var textArea = document.createElement("textarea");
-        textArea.setAttribute("name", "ChapterTitle_" + chapterCount);
-        textArea.setAttribute("cols", "20");
-        textArea.setAttribute("rows", "2");
-        referenceElement.parentNode.insertBefore(textArea, referenceElement.nextSibling);
-        referenceElement = textArea;
+function addChapter() {
+    var textArea = document.createElement("textarea");
+    textArea.setAttribute("class", "form-control form-control-custom");
+    textArea.setAttribute("name", "ChapterTitle_" + chapterCount);
+    textArea.setAttribute("cols", "20");
+    textArea.setAttribute("rows", "2");
+    referenceElement.parentNode.insertBefore(textArea, referenceElement.nextSibling);
+    referenceElement = textArea;
 
-        var contentArea = document.createElement("textarea");
-        contentArea.setAttribute("class", "form-control summernote");
-        contentArea.setAttribute("name", "Content_" + chapterCount);
-        contentArea.setAttribute("cols", "20");
-        contentArea.setAttribute("rows", "2");
-        referenceElement.parentNode.insertBefore(contentArea, referenceElement.nextSibling);
-        referenceElement = contentArea;
+    var br = document.createElement("br");
+    referenceElement.parentNode.insertBefore(br, referenceElement.nextSibling);
+    referenceElement = br;
 
-        for (var i = 0; i < 2; i++) {
-            var br1 = document.createElement("br");
-            referenceElement.parentNode.insertBefore(br1, referenceElement.nextSibling);
-            referenceElement = br1;
-        }
+    var contentArea = document.createElement("textarea");
+    contentArea.setAttribute("class", "form-control summernote");
+    contentArea.setAttribute("name", "Content_" + chapterCount);
+    contentArea.setAttribute("cols", "20");
+    contentArea.setAttribute("rows", "2");
+    referenceElement.parentNode.insertBefore(contentArea, referenceElement.nextSibling);
+    referenceElement = contentArea;
 
-        chapterCount = chapterCount + 1;
-
-        $(".summernote").summernote({
-            height: 300,
-            minHeight: 200,
-            focus: true,
-        });
+    for (var i = 0; i < 2; i++) {
+        var br1 = document.createElement("br");
+        referenceElement.parentNode.insertBefore(br1, referenceElement.nextSibling);
+        referenceElement = br1;
     }
-</script>
+
+    chapterCount = chapterCount + 1;
+
+    $(".summernote").summernote({
+        height: 300,
+        minHeight: 200,
+        focus: true,
+    });
+}
+    </script>

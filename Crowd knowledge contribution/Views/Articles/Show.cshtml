@@ -1,42 +1,40 @@
 ﻿@using System.Web.UI.WebControls
 @model Crowd_knowledge_contribution.Models.Article
 
-<h2>Vizualizare articol</h2>
-
 <br />
 <a class="btn btn-primary" href="/Articles/Index">Inapoi la articole</a>
 <br />
 <br />
 
-<div class="panel panel-default">
+<div class="panel panel-default panel-default-custom">
     @Html.Partial("ArticleInfo", Model)
     @if (ViewBag.afisareButoane)
     {
-    <div class="panel-footer">
+    <div class="panel-footer panel-footer-custom">
         @if (Model.UserId == ViewBag.utilizatorCurent || ViewBag.esteAdmin)
         {
             if (ViewBag.esteAdmin || !Model.Protected)
             {
-                <a class="btn btn-success pull-left" href="/Articles/Edit/@Model.ArticleId">Modifica articol</a>
+                <a class="btn btn-primary pull-left" href="/Articles/Edit/@Model.ArticleId">Modifica articol</a>
             }
         }
         @if (ViewBag.IsEditor || ViewBag.esteAdmin)
         {
-            <a class="btn btn-success pull-left" href="/Versions/Index/@Model.ArticleId">Versiuni</a>
+            <a class="btn btn-primary pull-left" href="/Versions/Index/@Model.ArticleId">Versiuni</a>
             if (Model.UserId != ViewBag.utilizatorCurent || ViewBag.esteAdmin)
             {
                 if (!Model.Protected)
                 {
                     using (Html.BeginForm("Protect", "Articles", method: FormMethod.Post, routeValues: new {id = @Model.ArticleId, version = @Model.VersionId, setProtected = true } ))
                     {
-                        <button class="btn btn-success pull-left" type="submit">Protejează</button>
+                        <button class="btn btn-primary pull-left" type="submit">Protejează</button>
                     }
                 }
                 else
                 {
                     using (Html.BeginForm("Protect", "Articles", method: FormMethod.Post, routeValues: new {id = @Model.ArticleId, version = @Model.VersionId, setProtected = false } ))
                     {
-                        <button class="btn btn-success pull-left" type="submit">Elimină protejarea</button>
+                        <button class="btn btn-primary pull-left" type="submit">Elimină protejarea</button>
                     }
                 }
             }
@@ -67,15 +65,16 @@
         <div class="row">
             <div class="col-md-2"></div>
             <div class="col-md-8">
-                <div>
+                <div class="custom-div">
                     <p>@comm.Content</p>
                     <small class="pull-right">@comm.Date</small>
-                    <i class="glyphicon glyphicon-user"></i> <i>Scris de</i> <strong> @ViewBag.CommentUsernames[commentCount] </strong>
+                    <i class="glyphicon glyphicon-user"></i> <strong> @ViewBag.CommentUsernames[commentCount] </strong>
                 </div>
+                <br/>
                 @if (comm.UserId == ViewBag.utilizatorCurent)
                 {
                     <div style="display: inline-block; float: left; margin-right: 15px">
-                        <a class="glyphicon glyphicon-pencil" href="/Comments/Edit/@comm.CommentId"></a>
+                        <a class="glyphicon glyphicon-pencil custom-a" href="/Comments/Edit/@comm.CommentId"></a>
                     </div>
                 }
                 @if (comm.UserId == ViewBag.utilizatorCurent || ViewBag.esteAdmin)
@@ -83,7 +82,7 @@
                     <div style="display: inline-block; float: left">
                         <form method="post" action="/Comments/Delete/@comm.CommentId">
                             @Html.HttpMethodOverride(HttpVerbs.Delete)
-                            <button class="glyphicon glyphicon-trash" style="border: none; background: transparent" type="submit"></button>
+                            <button class="glyphicon glyphicon-trash custom-delete-a" style="border: none; background: transparent" type="submit"></button>
                         </form>
                     </div>
                 }
@@ -102,16 +101,15 @@
         <div class="col-md-2">
         </div>
         <div class="col-md-8">
-            <div class="panel">
+            <div class="panel panel-custom">
                 <form method="post" action="/Articles/Show/@Model.ArticleId">
-                    <div class="panel-body">
+                    <div class="panel-body panel-body-custom">
                         <input type="hidden" name="ArticleId" value="@Model.ArticleId" />
                         <input type ="hidden" name="UserId" value="@ViewBag.utilizatorCurent">
-                        <label>Continut comentariu</label>
                         <br />
-                        <textarea class="form-control" name="Content"></textarea>
+                        <textarea class="form-control form-control-custom" name="Content"></textarea>
                         <br />
-                        <button class="btn btn-success " type="submit">Adauga comentariu</button>
+                        <button class="btn btn-primary " type="submit">Adauga comentariu</button>
                     </div>
                 </form>
             </div>

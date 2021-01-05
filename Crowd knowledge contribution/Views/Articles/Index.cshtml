@@ -1,129 +1,90 @@
 ﻿@using System.Web.UI.WebControls
 @using Crowd_knowledge_contribution.Models
 
+<div class="custom-div">
+    <h1>@ViewBag.Message</h1>
+</div>
+<form class="form-inline" style="text-align: center;">
+    <select name="order" class="form-control form-control-custom">
+        @if (@ViewBag.Order == "0")
+        {
+            <option value="0" selected>Cele mai recente</option>
+        }
+        else
+        {
+            <option value="0">Cele mai recente</option>
+        }
+        @if (@ViewBag.Order == "1")
+        {
+            <option value="1" selected>Cele mai vechi</option>
+        }
+        else
+        {
+            <option value="1">Cele mai vechi</option>
+        }
+        @if (@ViewBag.Order == "2")
+        {
+            <option value="2" selected>Alfabetic</option>
+        }
+        else
+        {
+            <option value="2">Alfabetic</option>
+        }
+        @if (@ViewBag.Order == "3")
+        {
+            <option value="3" selected>Alfabetic (ordine inversă)</option>
+        }
+        else
+        {
+            <option value="3">Alfabetic (ordine inversă)</option>
+        }
+    </select>
 
-@{
-    ViewBag.Title = "Articole";
-}
+    @Html.TextBox("search", (string)ViewBag.SearchString, new { @class = "form-control form-control-custom", @placeholder = "Introduceți cuvinte cheie." })
+    <button type="submit" class="form-control form-control-custom"><i class="glyphicon glyphicon-search"></i></button>
+</form>
+<br/>
 
-<h1>@ViewBag.Message</h1>
-<h2>@ViewBag.Title</h2>
-
-@if (User.IsInRole("Admin"))
-{
-    <a class="btn btn-primary" href="/Domains/Index">Afișare domenii</a>
-}
 @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
 {
     <a class="btn btn-primary" href="/Articles/New">Adaugă articol</a>
     <br />
+    <br />
 }
-<br />
-
-<form class="card card-sm" ="GET">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <label class="text-muted">Ordonare</label>
-                <select name="order" class="form-control">
-                    @if (@ViewBag.Order == "0")
-                    {
-                        <option value="0" selected>Cele mai recente</option>
-                    }
-                    else
-                    {
-                        <option value="0">Cele mai recente</option>
-                    }
-                    @if (@ViewBag.Order == "1")
-                    {
-                        <option value="1" selected>Cele mai vechi</option>
-                    }
-                    else
-                    {
-                        <option value="1">Cele mai vechi</option>
-                    }
-                    @if (@ViewBag.Order == "2")
-                    {
-                        <option value="2" selected>Alfabetic</option>
-                    }
-                    else
-                    {
-                        <option value="2">Alfabetic</option>
-                    }
-                    @if (@ViewBag.Order == "3")
-                    {
-                        <option value="3" selected>Alfabetic (ordine inversă)</option>
-                    }
-                    else
-                    {
-                        <option value="3">Alfabetic (ordine inversă)</option>
-                    }
-                </select>
-                <br />
-                <br />
-
-                <div class="search-container">
-                    @Html.TextBox("search", (string)ViewBag.SearchString, new { @class = "form-control", @placeholder = "Introduceți cuvinte cheie." })
-                    <br/>
-                    <button type="submit"><i class="glyphicon glyphicon-search"></i></button>
-                </div>
-
-                <br />
-            </div>
-        </div>
-    </div>
-
-
-    <!--
-        @Html.TextBox("search", (string)ViewBag.SearchString, new { @class = "form-control", @placeholder = "Introduceți cuvinte cheie." })
-        <br />
-        <input type="submit" value="Filtează" class="col-md-2" />
-        <br/>
-     -->
-
-
-
-
-</form>
-
-
-<br />
-<br />
-
-
 
 @foreach (Article article in ViewBag.Articles)
 {
-    <div class="panel panel-info">
+    <div class="panel panel-info panel-info-custom">
         @Html.Partial("ArticleInfo", article)
-        <div class="panel-footer">
+        <div class="panel-footer panel-footer-custom">
             <a class="btn btn-sm btn btn-primary" href="/Articles/Show/@article.ArticleId">
                 <i class="glyphicon glyphicon-book"></i> <strong> Citește articol</strong>
             </a>
+            <div class="clearfix"></div>
         </div>
     </div>
 
 }
 
 <div>
-    <nav aria-label="Page navigation">
+    <nav aria-label="Page navigation custom-navigation">
 
-        <ul class="pagination">
+        <ul class="pagination custom-pagination">
             <li>
-                <a href="/Articles/Index?page=1&@ViewBag.CarryArguments" aria-label="Previous">
+                <a href="/Articles/Index?page=1&@ViewBag.CarryArguments" aria-label="Previous" class="custom-a">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
             @for (var i = 1; i <= ViewBag.LastPage; i++)
             {
                 <li>
-                    <a href="/Articles/Index?page=@(i)&@ViewBag.CarryArguments">
+                    <a href="/Articles/Index?page=@(i)&@ViewBag.CarryArguments" class="custom-a">
                         @(i)
                     </a>
                 </li>
             }
             <li>
-                <a href="/Articles/Index?page=@(ViewBag.LastPage)&@ViewBag.CarryArguments" aria-label="Next">
+                <a href="/Articles/Index?page=@(ViewBag.LastPage)&@ViewBag.CarryArguments" aria-label="Next" class="custom-a">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
